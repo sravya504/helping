@@ -1,0 +1,178 @@
+/* Base Styles */
+body {
+  margin: 0;
+  font-family: 'Lato', sans-serif;
+  background-color: #fdfbfb;
+  color: #333;
+  
+}
+
+/* --- Donate Page Branding Banner --- */
+.top-header {
+  text-align: center;
+  padding: 30px 10px 20px;
+  background-color: #f0f0f0;
+  border-bottom: 2px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.top-header h1 {
+  color: #7a1b1f;
+  margin: 0;
+  font-size: 3em;
+  letter-spacing: 2px;
+  font-weight: 900;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+.top-header .subtitle {
+  color: #7a1b1f;
+  font-size: 1.2em;
+  margin: 5px 0;
+  font-weight: 700;
+}
+.top-header .tagline {
+  font-weight: 700;
+  margin: 10px 0 5px;
+  font-size: 1.1em;
+  color: #555;
+}
+.top-header .reg-info {
+  font-weight: 700;
+  margin: 10px 0 5px;
+  font-size: 1.1em;
+  color: #555;
+}
+
+/* --- Donation Content Section (Refactored to use Bootstrap cards) --- */
+.donation-section {
+  padding: 80px 20px;
+  background-color: #ffffff;
+  text-align: center;
+  box-shadow: inset 0 5px 10px rgba(0,0,0,0.05);
+}
+.donation-section h2 {
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+/* Custom Card Styles to match the original design */
+.donation-card {
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  padding: 30px;
+  height: 100%;
+}
+.qr-code-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.qr-code-card .qr-code {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 15px;
+}
+
+/* Details Card Styles */
+.details-card h3 {
+  font-weight: 700;
+  color: #7a1b1f;
+  margin-bottom: 20px;
+}
+.details-card p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+  font-size: 1.05em;
+}
+.details-card p strong {
+  font-weight: 700;
+  color: #333;
+  min-width: 120px;
+}
+.details-card .upi-value {
+  flex-grow: 1;
+  text-align: left;
+  padding: 0 10px;
+  font-weight: 400;
+  color: #555;
+}
+.copy-button {
+  background-color: #9d242c;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+.copy-button.copied {
+  background-color: #28a745;
+}
+.separator {
+  font-weight: 700;
+  color: #7a1b1f;
+  margin: 20px 0;
+  display: block;
+}
+.account-details p {
+  justify-content: flex-start;
+}
+.account-details p strong {
+  margin-right: 10px;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+  .donation-card {
+    margin-bottom: 20px;
+  }
+}
+@media (max-width: 850px) {
+  .navbar {
+    padding: 10px 20px;
+    height: auto;
+  }
+  .logo img {
+    height: 40px;
+  }
+  .nav-links {
+    display: none;
+  }
+  .donate-button {
+    margin-left: 10px;
+    padding: 8px 18px;
+  }
+  .footer-section {
+    flex-basis: 100%;
+    min-width: auto;
+  }
+}
+@media (max-width: 500px) {
+  .top-header h1 {
+    font-size: 2.2em;
+  }
+  .details-card p {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .details-card p strong {
+    margin-bottom: 5px;
+  }
+  .details-card .upi-value {
+    padding: 0;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  .copy-button {
+    align-self: flex-end;
+  }
+}

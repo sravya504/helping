@@ -1,0 +1,126 @@
+body {
+    font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* --- Event Card Enhancements --- */
+.event-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+.event-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+}
+.events .card-img-top {
+  height: 200px;
+  /* object-fit: contain;
+  padding: 10px; */
+}
+.event-card .card-body {
+    position: relative;
+}
+.event-date {
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    background-color: #fff;
+    color: #8B2323;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    text-align: center;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.event-date span {
+    display: block;
+    font-size: 1.5rem;
+}
+
+/* View Details Button Styles */
+.btn-outline-danger {
+    background-color: #8B2323;
+    color: white;
+    border-color: #8B2323;
+}
+.btn-outline-danger:hover {
+    background-color: #a03232;
+    color: white;
+    border-color: #a03232;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .event-card .card-img-top {
+        height: 150px;
+    }
+    .event-date {
+        top: -15px;
+        right: 15px;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+    }
+    .event-date span {
+        font-size: 1.2rem;
+    }
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .row.g-4 {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+    }
+    .col-xl-3, .col-lg-4, .col-md-6, .col-sm-10 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .event-card .card-img-top {
+        height: 120px;
+    }
+    .event-date {
+        top: -12px;
+        right: 10px;
+        padding: 0.3rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    .event-date span {
+        font-size: 1rem;
+    }
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: none;
+    }
+    .modal-content {
+        border-radius: 0.5rem;
+    }
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .row.g-4 {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
+    }
+    .col-xl-3, .col-lg-4, .col-md-6, .col-sm-10 {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+    .card-title {
+        font-size: 1rem;
+    }
+    .card-text {
+        font-size: 0.9rem;
+    }
+    .btn-outline-danger {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+}

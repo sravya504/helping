@@ -1,0 +1,136 @@
+/* Scoped styling for Admin Dashboard */
+.admin-dashboard-page {
+  min-height: 100vh;
+  background: #ffffff; /* white background */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Top bar with logout button on right */
+.top-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-bar h1 {
+  font-size: 32px;
+  color: #333;
+}
+
+.logout-btn {
+  padding: 10px 20px;
+  background: #800000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #c82333;
+}
+
+/* Upload form wrapper with heading */
+.upload-form-wrapper {
+  margin-top: 30px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upload-form-wrapper h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+/* Glass effect form */
+.upload-form-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 30px 40px;
+  width: 500px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-form-container label {
+  font-weight: 600;
+  margin-top: 10px;
+  color: #333;
+}
+
+.upload-form-container input[type="file"] {
+  margin-top: 10px;
+}
+
+.upload-form-container input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.upload-form-container button {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #800000;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+
+/* Responsive */
+@media (max-width: 450px) {
+  .upload-form-container {
+    width: 90%;
+    padding: 20px;
+  }
+}
+
+
+.success-msg {
+  color: green;
+  margin-top: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.error-msg {
+  color: red;
+  margin-top: 15px;
+  font-weight: 600;
+    text-align: center;
+}
+.my-button {
+  background-color: #800000; /* normal */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.my-button:hover {
+  background-color: #a00000; /* slightly lighter on hover */
+}
+
+.my-button:active {
+  background-color: #500000; /* darker when clicked */
+}

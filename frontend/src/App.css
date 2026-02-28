@@ -1,0 +1,473 @@
+/* ------About us css------
+.about_2{
+     margin-top: 15px;
+     width: 100%;
+     max-width: 800px;
+     color: white;
+}
+.carousel-controls-bottom {
+  position: relative; /* relative to carousel container 
+  bottom: 0;          /* aligned at bottom 
+  width: 100%;
+}
+.charity_para{
+    
+    width: fit-content;
+    padding: 10px;
+    border-radius: 10px;
+    word-spacing:6px;
+    width: 100%;
+}
+.charity_para:hover{
+     box-shadow: 0 8px 6px -2px rgba(94, 91, 91, 0.4);
+
+}
+.heading_size{
+    font-size: 1.5rem;
+}
+.card-hover-grey:hover {
+  background-color: #6c757d !important; /* Bootstrap secondary grey 
+  color: white; /* optional, if you want text to contrast
+  transition: background-color 0.3s ease; /* smooth effect 
+}
+.btn-hover:hover {
+  background-color: rgba(127, 29, 29, 5) !important; /* Bootstrap secondary grey 
+  color: white !important; /* text color on hover 
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.btn-hover:active{
+    background-color: rgb(238, 127, 127) !important; /* Bootstrap secondary grey 
+  color: white !important; /* text color on hover 
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.shadow-bottom {
+ 
+  box-shadow: 0 8px 6px -2px rgba(94, 91, 91, 0.4); /* X=0 → only vertical 
+
+
+ /* only bottom 
+}
+.organs,.selection{
+    border: 1px solid grey;
+    padding: 25px 40px;
+    background-color: rgb(230, 226, 226);
+    box-shadow: 8px 8px 6px 2px rgba(94, 91, 91, 0.4);
+    width: 100%;
+}
+.volunteer_innerdiv{
+    background-color: rgb(230, 226, 226,0.4);
+    border: 1px solid rgb(105, 104, 104);
+}
+.volunteer_innerdiv div{
+    flex:1;
+     
+}
+.volunteer_innerdiv div:hover{
+    color: white;
+     box-shadow: 8px 8px 6px 2px rgba(94, 91, 91, 0.4);
+}
+
+
+ */
+
+ /* ------About us css------ */
+ section {
+   margin-top:clamp(1rem,5vw,4rem);
+}
+section h2 {
+  margin-bottom: 1.5rem;
+}
+body {
+  line-height: 1.6;
+}
+p {
+  margin-bottom: 1rem;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+
+
+
+.carousel-controls-bottom {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+
+
+.charity_para {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  word-spacing: 6px;
+}
+.charity_para:hover {
+  box-shadow: 0 8px 6px -2px rgba(94, 91, 91, 0.4);
+}
+
+
+.heading_size {
+  font-size: 1.5rem;
+}
+
+.card-hover-grey:hover {
+  background-color: #f89d9de1 !important; /* Light maroon color */
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.btn-hover:hover {
+  background-color: rgba(127, 29, 29, 0.8) !important;
+  color: white !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.btn-hover:active {
+  background-color: rgb(238, 127, 127) !important;
+  color: white !important;
+}
+
+
+.shadow-bottom {
+  box-shadow: 0 8px 6px -2px rgba(94, 91, 91, 0.4);
+}
+
+
+.organs,
+.selection {
+  border: 1px solid grey;
+  padding: 25px 40px;
+  background-color: rgb(230, 226, 226);
+  box-shadow: 8px 8px 6px 2px rgba(94, 91, 91, 0.4);
+  width: 100%;
+}
+
+.volunteer_innerdiv {
+  background-color: rgba(230, 226, 226, 0.4);
+  border: 1px solid rgb(105, 104, 104);
+}
+.volunteer_innerdiv div {
+  flex: 1;
+}
+.volunteer_innerdiv div:hover {
+  color: white;
+  box-shadow: 8px 8px 6px 2px rgba(94, 91, 91, 0.4);
+}
+/* Prevent horizontal scroll on small screens */
+body, html {
+  overflow-x: hidden;
+}
+img {
+    max-width: 100% !important;
+}
+/* Ensure images and flex items don’t overflow */
+.funding_resources, .card-group, .volunteer_innerdiv {
+  max-width: 100% !important;
+  
+}
+
+
+/* ---------------- Responsive ---------------- */
+
+/* Tablets (768px–991px) */
+@media (max-width: 991px) {
+  .heading_size {
+    font-size: 1.3rem;
+  }
+
+  
+
+  .card-group {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .funding_resources .main_content {
+    flex-direction: column !important;
+    text-align: center;
+  }
+
+  .funding_resources img {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
+/* Phones (<768px) */
+
+  section h2 {
+    margin-bottom: 0.75rem; /* smaller heading spacing */
+    font-size: 1.5rem;      /* shrink font too if needed */
+    text-align: center;     /* optional: center on small screens */
+  }
+@media (max-width: 767px) {
+  .heading_size {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  
+
+  .charity_para {
+    font-size: 0.9rem;
+    padding: 8px;
+    word-spacing: 3px;
+  }
+  .funding_resources .main_content {
+    flex-direction: column !important;  /* stack image + text */
+    align-items: center;
+    text-align: center;
+    border-top-left-radius: 20px !important;
+    border-top-right-radius: 20px !important;
+    border-bottom-left-radius: 0% !important;
+  }
+
+  .funding_resources img {
+    width: 100% !important;  /* image centered */
+    max-width: 500px;
+    margin-bottom: 15px;    /* spacing before text */
+    transform: translateX(0px) !important;
+    height: auto;
+    margin: 0 auto 15px auto;
+    display: block;
+  }
+  
+
+
+  .organs,
+  .selection {
+    padding: 15px 20px;
+    font-size: 0.9rem;
+  }
+
+  .volunteer_innerdiv {
+    flex-direction: column !important;
+  }
+
+  .volunteer_innerdiv div {
+    
+    text-align: center;
+   
+    
+  padding: 16px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+ body, html {
+    overflow-x: hidden;
+  }
+
+
+  }
+  @media (max-width:425px){
+    .aims_n_objectives .c-btn{
+        gap: 10px !important;
+    }
+  }
+.about_2 {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.about_card {
+  position: relative;
+  width: 300px;
+  padding: 20px 20px 40px 20px;
+  text-align: center;
+  color: #fff;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.about_card_image {
+  position: relative;
+  top: 40px; /* half of image height to make it overlap */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  z-index: 1;
+  border: 4px solid #fff;
+  background-color: #fff;
+}
+
+.about_card_image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about_card h2 {
+  margin-top: 50px; /* space below circular image */
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.about_card p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+/* ---------------- About_2 Section ---------------- */
+.about_2 {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.about_card {
+  position: relative;
+  width: 300px;
+  padding: 20px 20px 40px 20px;
+  text-align: center;
+  color: #fff;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about_card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.about_card_image {
+  position: relative;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  z-index: 1;
+  border: 4px solid #fff;
+  background-color: #fff;
+}
+
+.about_card_image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about_card h2 {
+  margin-top: 50px;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.about_card p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ---------------- Responsive ---------------- */
+
+/* Tablets (≤991px) */
+@media (max-width: 991px) {
+  .about_2 {
+    gap: 1.5rem;
+  }
+
+  .about_card {
+    width: 260px;
+  }
+
+  .about_card h2 {
+    font-size: 1.2rem;
+  }
+
+  .about_card p {
+    font-size: 0.9rem;
+  }
+
+  .about_card_image {
+    width: 70px;
+    height: 70px;
+    top: 35px;
+  }
+}
+
+/* Phones (≤767px) */
+@media (max-width: 767px) {
+  .about_2 {
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .about_card {
+    width:100%;
+    max-width: 340px;
+    padding: 20px 15px 35px 15px;
+
+  }
+
+  .about_card_image {
+    width: 65px;
+    height: 65px;
+    top: 30px;
+  }
+
+  .about_card h2 {
+    font-size: 1.1rem;
+  }
+
+  .about_card p {
+    font-size: 0.9rem;
+  }
+}
+/* ---------------- Departments Section ---------------- */
+.departments {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.departments img {
+  width: 100%;
+  max-width: 900px; /* keeps it big on desktop */
+  height: auto;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Tablet view */
+@media (max-width: 991px) {
+  .departments img {
+    max-width: 95%;
+    height: auto;
+    object-fit: contain;
+  }
+}
+
+/* Mobile view */
+@media (max-width: 767px) {
+  .departments img {
+    width: 100%;
+    height: auto;
+    max-width: 600px;
+    object-fit: contain;
+    margin: 0 auto;
+  }
+}
+
+
+

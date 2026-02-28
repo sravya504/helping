@@ -1,0 +1,14 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Secrets
+HH_website/backend/serviceAccountKey.json
+
+# OS files
+.DS_Store
+Thumbs.db

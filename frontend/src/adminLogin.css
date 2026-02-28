@@ -1,0 +1,99 @@
+/* adminLogin.css - Scoped to Admin Login Page Only */
+
+.admin-login-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff; /* White background */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 40px 50px;
+  width: 500px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.login-container h2 {
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 8px 15px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
+}
+
+.login-container input::placeholder {
+  color: #666;
+}
+
+.login-container button {
+  width: 100%;
+  padding: 7px;
+  margin-top: 15px;
+  border-radius: 10px;
+  border: none;
+  background: #800000;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+
+
+@media (max-width: 400px) {
+  .login-container {
+    width: 90%;
+    padding: 30px 20px;
+  }
+}
+
+/* Login messages */
+.success-msg {
+  color: green;
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.error-msg {
+  color: rgb(238, 128, 128);
+  margin-top: 15px;
+  font-weight: 600;
+}
+.my-button {
+  background-color: #800000; /* normal */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.my-button:hover {
+  background-color: #a00000; /* slightly lighter on hover */
+}
+
+.my-button:active {
+  background-color: #500000; /* darker when clicked */
+}

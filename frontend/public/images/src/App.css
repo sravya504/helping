@@ -1,0 +1,324 @@
+body {
+    font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* --- Header Styles --- */
+.hh-header-top {
+    text-align: center;
+    padding: 2rem 1rem 0.5rem 1rem;
+    background: linear-gradient(180deg, #f5eaea 0%, #f8f9fa 100%);
+}
+.header-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hh-header-top h1 {
+    color: #8B2323;
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 0.2rem;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+.hh-header-top h2 {
+    color: #8B2323;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+    letter-spacing: 1px;
+}
+.hh-header-top p {
+    color: #333;
+    font-size: 1rem;
+    /* margin-bottom: 0.2rem; */
+}
+.hh-header-top .hh-reg {
+    font-size: 0.95rem;
+    color: #444;
+    /* margin-bottom: 0.5rem; */
+}
+.hh-logo {
+    height: 60px;
+    /* margin-left: 1rem; */
+}
+
+/* --- Navigation Bar --- */
+.navbar-logo {
+    height: 70px;
+    /* margin-right: 1rem; */
+    border-radius: 50%;
+    clip-path: circle(50% at center);
+}
+.hh-navbar {
+    background-color: #8B2323;
+    padding: 0.5rem 0;
+    transition: box-shadow 0.3s ease-in-out;
+}
+.hh-navbar.scrolled {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.hh-navbar .navbar-nav .nav-link {
+    color: #fff !important;
+    font-weight: 500;
+    font-size: 1.05rem;
+    margin: 0 1rem;
+    transition: color 0.2s;
+}
+.hh-navbar .navbar-nav .nav-link:hover,
+.hh-navbar .navbar-nav .nav-link.active {
+    color: #ffd6d6 !important;
+}
+.hh-navbar .donate-btn {
+    background: #fff;
+    color: #8B2323;
+    font-weight: 600;
+    border-radius: 2rem;
+    padding: 0.4rem 1.2rem;
+    margin-left: 1rem;
+    border: none;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.hh-navbar .donate-btn:hover {
+    background: #ffd6d6;
+    color: #8B2323;
+    transform: scale(1.05);
+}
+
+/* --- Event Card Enhancements --- */
+.event-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+.event-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+}
+.card-img-top {
+  height: 200px;
+  
+}
+.event-card .card-body {
+    position: relative;
+}
+.event-date {
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    background-color: #fff;
+    color: #8B2323;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    text-align: center;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.event-date span {
+    display: block;
+    font-size: 1.5rem;
+}
+
+/* View Details Button Styles */
+.btn-outline-danger {
+    background-color: #8B2323;
+    color: white;
+    border-color: #8B2323;
+}
+.btn-outline-danger:hover {
+    background-color: #a03232;
+    color: white;
+    border-color: #a03232;
+}
+
+/* --- Footer Styles --- */
+footer.hh-footer {
+    background: #f5eaea;
+    color: #8B2323;
+    padding: 2.5rem 0 1rem 0;
+    margin-top: 3rem;
+    font-size: 1rem;
+}
+.hh-footer h5 {
+    color: #8B2323;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.hh-footer .social-links a {
+    display: inline-block;
+    background: #f3dede;
+    color: #8B2323;
+    margin: 0 0.3rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 36px;
+    font-size: 1.3rem;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.hh-footer .social-links a:hover {
+    background: #8B2323;
+    color: #fff;
+    transform: scale(1.1);
+}
+.hh-footer .hh-desc, .hh-footer .hh-contact-list {
+     color: #a14d4d;
+}
+.hh-footer .hh-contact-list {
+    list-style: none; padding-left: 0; margin-bottom: 1rem;
+}
+.hh-footer .hh-contact-list li { margin-bottom: 0.5rem; font-size: 1rem; }
+.hh-footer .hh-contact-list i { margin-right: 0.5rem; }
+.hh-footer .hh-copyright { color: #8B2323; font-size: 0.95rem; margin-top: 1.5rem; }
+
+/* Responsive tweaks */
+@media (max-width: 991px) {
+    .hh-navbar .collapse.navbar-collapse {
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 0;
+    }
+    .hh-navbar .navbar-logo {
+        margin-bottom: 1rem;
+    }
+    .hh-navbar .navbar-nav {
+        margin: 1rem 0;
+        text-align: center;
+    }
+    .hh-navbar .navbar-nav .nav-item {
+        margin: 0.5rem 0;
+    }
+    .hh-navbar .donate-btn {
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hh-header-top {
+        padding: 1.5rem 0.5rem 0.5rem 0.5rem;
+    }
+    .hh-header-top h1 {
+        font-size: 2rem;
+        letter-spacing: 1px;
+    }
+    .hh-header-top h2 {
+        font-size: 1rem;
+    }
+    .hh-header-top p {
+        font-size: 0.9rem;
+    }
+    .hh-header-top .hh-reg {
+        font-size: 0.85rem;
+    }
+    .navbar-logo {
+        height: 50px;
+    }
+    .hh-navbar .navbar-nav .nav-link {
+        margin: 0 0.5rem;
+        font-size: 1rem;
+    }
+    .hh-navbar .donate-btn {
+        margin-left: 0.5rem;
+        padding: 0.3rem 1rem;
+        font-size: 0.9rem;
+    }
+    .event-card .card-img-top {
+        height: 150px;
+    }
+    .event-date {
+        top: -15px;
+        right: 15px;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+    }
+    .event-date span {
+        font-size: 1.2rem;
+    }
+    .hh-footer {
+        padding: 2rem 0 1rem 0;
+        margin-top: 2rem;
+    }
+    .hh-footer .social-links a {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        font-size: 1.1rem;
+        margin: 0 0.2rem;
+    }
+    .hh-footer .hh-contact-list li {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hh-header-top h1 {
+        font-size: 1.8rem;
+    }
+    .hh-header-top h2 {
+        font-size: 0.95rem;
+    }
+    .hh-header-top p {
+        font-size: 0.85rem;
+    }
+    .hh-header-top .hh-reg {
+        font-size: 0.8rem;
+    }
+    .navbar-logo {
+        height: 40px;
+    }
+    .hh-navbar .navbar-nav .nav-link {
+        margin: 0 0.3rem;
+        font-size: 0.95rem;
+    }
+    .hh-navbar .donate-btn {
+        padding: 0.25rem 0.8rem;
+        font-size: 0.85rem;
+        margin-left: 0.3rem;
+    }
+    .event-card .card-img-top {
+        height: 120px;
+    }
+    .event-date {
+        top: -12px;
+        right: 10px;
+        padding: 0.3rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    .event-date span {
+        font-size: 1rem;
+    }
+    .hh-footer h5 {
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+    }
+    .hh-footer .hh-desc, .hh-footer .hh-contact-list {
+        font-size: 0.9rem;
+    }
+    .hh-footer .hh-contact-list li {
+        margin-bottom: 0.4rem;
+        font-size: 0.85rem;
+    }
+    .hh-footer .social-links a {
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        font-size: 1rem;
+        margin: 0 0.15rem;
+    }
+    .hh-footer .hh-copyright {
+        font-size: 0.85rem;
+        margin-top: 1rem;
+    }
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: none;
+    }
+    .modal-content {
+        border-radius: 0.5rem;
+    }
+}
