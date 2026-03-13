@@ -134,3 +134,43 @@
 .my-button:active {
   background-color: #500000; /* darker when clicked */
 }
+
+
+.popup-overlay{
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.popup-box{
+  background:white;
+  padding:30px;
+  border-radius:10px;
+  width:500px;
+  max-height:80vh;
+  overflow:auto;
+}
+
+.drag-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  margin-bottom:10px;
+  border:1px solid #ddd;
+  border-radius:6px;
+  background:#fafafa;
+  cursor:grab;
+}
+
+.number{
+  font-weight:bold;
+  font-size:18px;
+  width:30px;
+}

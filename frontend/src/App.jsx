@@ -52,6 +52,7 @@ function AppWrapper() {
 
 <Route path="/admin/login" element={<AdminLogin />} />
 
+
 <Route
   path="/admin/dashboard"
   element={

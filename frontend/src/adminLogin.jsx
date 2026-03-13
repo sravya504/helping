@@ -94,7 +94,10 @@ const [messageType, setMessageType] = useState("");
     );
 
     const user = userCredential.user;
-    const token = await user.getIdToken();
+const token = await user.getIdToken();
+
+// STORE TOKEN
+localStorage.setItem("token", token);
 
     const response = await fetch("http://localhost:5000/admin/dashboard", {
       headers: {
@@ -106,6 +109,7 @@ const [messageType, setMessageType] = useState("");
 
     if (response.ok) {
   sessionStorage.setItem("isAdmin", "true");
+  localStorage.setItem("isAdmin", "true");
   setLoginMessage("Login successful!");
   setMessageType("success");
 
