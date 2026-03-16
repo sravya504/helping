@@ -72,26 +72,35 @@
 //   console.log(`Server running on http://localhost:${PORT}`);
 // });
 
-
 // server.js
 const express = require("express");
 const multer = require("multer");
 const cors = require("cors");
-const admin = require("firebase-admin"); // use for auth only
+const admin = require("firebase-admin");
 const cloudinary = require("./cloudinary");
-const db = require("./firebase"); // safe Firebase app
+const db = require("./firebase");
 require("dotenv").config();
 const streamifier = require("streamifier");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+function getPublicIdFromUrl(url) {
+
+  const parts = url.split("/upload/")[1]; 
+  const withoutVersion = parts.split("/").slice(1).join("/"); 
+  const publicId = withoutVersion.replace(/\.[^/.]+$/, ""); 
+
+  return publicId;
+}
+
 
 // ==============================
 // 🔐 Admin Verification Middleware
 // ==============================
 const verifyAdmin = async (req, res, next) => {
   try {
+
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -100,7 +109,6 @@ const verifyAdmin = async (req, res, next) => {
 
     const token = authHeader.split("Bearer ")[1];
 
-    // Use admin.auth() from already initialized app
     const decodedToken = await admin.auth().verifyIdToken(token);
 
     if (decodedToken.email === process.env.ADMIN_EMAIL) {
@@ -109,11 +117,13 @@ const verifyAdmin = async (req, res, next) => {
     } else {
       return res.status(403).json({ message: "Access denied. Not an admin." });
     }
+
   } catch (error) {
     console.error("Token verification failed:", error);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
+
 
 // ==============================
 // 🌍 Public Route
@@ -121,6 +131,8 @@ const verifyAdmin = async (req, res, next) => {
 app.get("/", (req, res) => {
   res.send("Backend is running successfully 🚀");
 });
+
+
 app.get("/admin/dashboard", verifyAdmin, (req, res) => {
   res.json({
     message: "Welcome Admin 🎉",
@@ -128,45 +140,217 @@ app.get("/admin/dashboard", verifyAdmin, (req, res) => {
   });
 });
 
+
 // ==============================
-// 🔒 Admin Image Upload
+// 🔒 Image Upload
 // ==============================
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+app.post("/upload", upload.array("images"), async (req, res) => {
 
-app.post("/upload", upload.single("image"), async (req, res) => {
   try {
+
     const { locations } = req.body;
-    const file = req.file;
-    if (!file) return res.status(400).send("No file uploaded");
+    const files = req.files;
 
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: "images" },
-      async (error, result) => {
-        if (error) return res.status(500).send(error);
+    if (!files || files.length === 0) {
+      return res.status(400).send("No files uploaded");
+    }
 
-        // Store metadata in Firebase Realtime Database
-        const newRef = db.ref("images").push();
-        await newRef.set({
-          url: result.secure_url,
-          locations: Array.isArray(locations)
-            ? locations
-            : JSON.parse(locations),
-          createdAt: Date.now(),
-        });
+    const parsedLocations = Array.isArray(locations)
+      ? locations
+      : JSON.parse(locations);
 
-        res.json({ message: "Image uploaded successfully", url: result.secure_url });
-      }
-    );
+    const uploadTime = Date.now();
 
-    streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    // store images temporarily
+    const uploadedImages = [];
+
+    // upload to Cloudinary one by one
+    for (let i = 0; i < files.length; i++) {
+
+      const file = files[i];
+
+      const result = await new Promise((resolve, reject) => {
+
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "images" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+
+        streamifier.createReadStream(file.buffer).pipe(uploadStream);
+
+      });
+
+      // push to temporary array
+      uploadedImages.push({
+        url: result.secure_url,
+        locations: parsedLocations,
+        createdAt: uploadTime
+      });
+
+    }
+
+    // now push to firebase in SAME ORDER
+    for (let img of uploadedImages) {
+
+      const newRef = db.ref("images").push();
+
+      await newRef.set(img);
+
+    }
+
+    res.json({
+      message: "Images uploaded successfully",
+      total: uploadedImages.length
+    });
+
   } catch (err) {
+
     console.error(err);
     res.status(500).send("Server Error");
+
+  }
+
+});
+// app.delete("/delete-image/:id", verifyAdmin, async (req, res) => {
+//   try {
+
+//     const imageId = req.params.id;
+
+//     const snapshot = await db.ref("images/" + imageId).once("value");
+//     const imageData = snapshot.val();
+
+//     if (!imageData) {
+//       return res.status(404).json({ message: "Image not found" });
+//     }
+
+//     const locations = imageData.locations || [];
+
+//     console.log("Current locations:", locations);
+
+//     // remove gallery from locations
+//     const updatedLocations = locations.filter(loc => loc !== "gallery");
+
+//     console.log("Updated locations:", updatedLocations);
+
+//     // ONLY update locations (never delete record)
+//     await db.ref("images/" + imageId + "/locations").set(updatedLocations);
+
+//     res.json({
+//       message: "Gallery removed, carousel kept"
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Delete failed" });
+//   }
+// });
+// app.delete("/delete-image/:id", verifyAdmin, async (req, res) => {
+//   try {
+
+//     const imageId = req.params.id;
+
+//     const snapshot = await db.ref("images/" + imageId).once("value");
+//     const imageData = snapshot.val();
+
+//     if (!imageData) {
+//       return res.status(404).json({ message: "Image not found" });
+//     }
+
+//     const locations = imageData.locations || [];
+//     const imageUrl = imageData.url;
+
+//     console.log("Current locations:", locations);
+
+//     // CASE 1: Image is in both carousel and gallery
+//     if (locations.includes("carousel") && locations.includes("gallery")) {
+
+//       const updatedLocations = locations.filter(loc => loc !== "gallery");
+
+//       await db.ref("images/" + imageId + "/locations").set(updatedLocations);
+
+//       return res.json({
+//         message: "Gallery removed, carousel kept"
+//       });
+
+//     }
+
+//     // CASE 2: Image only belongs to gallery
+//     else {
+
+//       // get cloudinary public id
+//       const publicId = getPublicIdFromUrl(imageUrl);
+
+//       // delete from cloudinary
+//       await cloudinary.uploader.destroy(publicId);
+
+//       // delete from firebase
+//       await db.ref("images/" + imageId).remove();
+
+//       return res.json({
+//         message: "Image deleted from Firebase and Cloudinary"
+//       });
+
+//     }
+
+//   } catch (err) {
+
+//     console.error(err);
+//     res.status(500).json({ message: "Delete failed" });
+
+//   }
+// });
+
+app.delete("/delete-image/:id", verifyAdmin, async (req, res) => {
+  try {
+
+    const imageId = req.params.id;
+
+    const snapshot = await db.ref("images/" + imageId).once("value");
+    const imageData = snapshot.val();
+
+    if (!imageData) {
+      return res.status(404).json({ message: "Image not found" });
+    }
+     const locations = imageData.locations || [];
+    const imageUrl = imageData.url;
+    if (locations.includes("carousel") && locations.includes("gallery")) {
+
+      const updatedLocations = locations.filter(loc => loc !== "gallery");
+
+      await db.ref("images/" + imageId + "/locations").set(updatedLocations);
+
+      return res.json({
+        message: "Gallery removed, carousel kept"
+      });
+
+    }
+
+    // get cloudinary public id
+    const publicId = getPublicIdFromUrl(imageUrl);
+
+    console.log("Deleting image:", publicId);
+
+    // delete from cloudinary
+    await cloudinary.uploader.destroy(publicId);
+
+    // delete from firebase
+    await db.ref("images/" + imageId).remove();
+
+    return res.json({
+      message: "Image deleted successfully"
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Delete failed" });
   }
 });
-
 // ==============================
 // 📅 Create Event (Admin)
 // ==============================
@@ -282,4 +466,7 @@ app.delete("/events/:id", async (req, res) => {
 // 🚀 Start Server
 // ==============================
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
