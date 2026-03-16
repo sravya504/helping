@@ -52,7 +52,12 @@ body {
     color: white;
     border-color: #a03232;
 }
-
+.event-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* number of lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 /* Responsive tweaks */
 @media (max-width: 768px) {
     .event-card .card-img-top {
