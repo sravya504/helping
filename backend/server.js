@@ -168,6 +168,117 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 });
 
 // ==============================
+// 📅 Create Event (Admin)
+// ==============================
+
+/* ===============================
+   ADD EVENT
+================================ */
+
+app.post("/events", upload.single("image"), async (req, res) => {
+
+  try {
+
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ message: "No image uploaded" });
+    }
+
+    const { title, desc, fullDate, time, location } = req.body;
+
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: "events" },
+      async (error, result) => {
+
+        if (error) {
+          console.error(error);
+          return res.status(500).json({ message: "Cloudinary upload failed" });
+        }
+
+        const imageUrl = result.secure_url;
+
+        const dateObj = new Date(fullDate);
+
+        const eventData = {
+          img: imageUrl,
+          title,
+          desc,
+          fullDate,
+          time,
+          location,
+          date: {
+            day: dateObj.getDate(),
+            month: dateObj
+              .toLocaleString("default", { month: "short" })
+              .toUpperCase()
+          },
+          createdAt: Date.now()
+        };
+
+        const newRef = db.ref("events").push();
+        await newRef.set(eventData);
+
+        res.json({
+          id: newRef.key,
+          ...eventData
+        });
+
+      }
+    );
+
+    streamifier.createReadStream(file.buffer).pipe(uploadStream);
+
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+
+  }
+
+});
+
+/* ===============================
+   GET EVENTS
+================================ */
+
+app.get("/events", async (req, res) => {
+
+  try {
+
+    const snapshot = await db.ref("events").once("value");
+
+    const data = snapshot.val() || {};
+
+    const events = Object.keys(data).map(id => ({
+      id,
+      ...data[id]
+    }));
+
+    res.json(events);
+
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch events" });
+
+  }
+
+});
+/* ===============================
+   DELETE EVENT
+================================ */
+
+app.delete("/events/:id", async (req, res) => {
+
+  await db.ref(`events/${req.params.id}`).remove();
+
+  res.json({ message: "Event deleted" });
+
+});
+
+
+// ==============================
 // 🚀 Start Server
 // ==============================
 const PORT = process.env.PORT || 5000;
