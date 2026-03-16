@@ -1,77 +1,3 @@
-// // server.js
-
-// const express = require("express");
-// const cors = require("cors");
-// const admin = require("firebase-admin");
-// const serviceAccount = require("./serviceAccountKey.json");
-
-// const app = express();
-
-// // Middleware
-// app.use(cors());
-// app.use(express.json());
-
-// // Initialize Firebase Admin
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
-
-// // ==============================
-// // 🔐 Admin Verification Middleware
-// // ==============================
-// const verifyAdmin = async (req, res, next) => {
-//   try {
-//     const authHeader = req.headers.authorization;
-
-//     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-//       return res.status(401).json({ message: "No token provided" });
-//     }
-
-//     const token = authHeader.split("Bearer ")[1];
-
-//     // Verify Firebase ID token
-//     const decodedToken = await admin.auth().verifyIdToken(token);
-
-//     // Check admin email (simple version)
-//     if (decodedToken.email === "n210307@rguktn.ac.in") {
-//       req.user = decodedToken;
-//       next();
-//     } else {
-//       return res.status(403).json({ message: "Access denied. Not an admin." });
-//     }
-
-//   } catch (error) {
-//     console.error("Token verification failed:", error);
-//     return res.status(401).json({ message: "Invalid or expired token" });
-//   }
-// };
-
-// // ==============================
-// // 🌍 Public Route
-// // ==============================
-// app.get("/", (req, res) => {
-//   res.send("Backend is running successfully 🚀");
-// });
-
-// // ==============================
-// // 🔒 Protected Admin Route
-// // ==============================
-// app.get("/admin/dashboard", verifyAdmin, (req, res) => {
-//   res.json({
-//     message: "Welcome Admin 🎉",
-//     user: req.user.email,
-//   });
-// });
-
-// // ==============================
-// // 🚀 Start Server
-// // ==============================
-// const PORT = 5000;
-
-// app.listen(PORT, () => {
-//   console.log(`Server running on http://localhost:${PORT}`);
-// });
-
 // server.js
 const express = require("express");
 const multer = require("multer");
@@ -308,8 +234,8 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
 app.delete("/delete-image/:id", verifyAdmin, async (req, res) => {
   try {
-
     const imageId = req.params.id;
+    const { location } = req.query; // expected values: "carousel", "gallery", "both"
 
     const snapshot = await db.ref("images/" + imageId).once("value");
     const imageData = snapshot.val();
@@ -317,34 +243,46 @@ app.delete("/delete-image/:id", verifyAdmin, async (req, res) => {
     if (!imageData) {
       return res.status(404).json({ message: "Image not found" });
     }
-     const locations = imageData.locations || [];
+
+    const locations = imageData.locations || [];
     const imageUrl = imageData.url;
-    if (locations.includes("carousel") && locations.includes("gallery")) {
 
-      const updatedLocations = locations.filter(loc => loc !== "gallery");
+    // If deleting from both, delete completely
+    if (location === "both") {
+      const publicId = getPublicIdFromUrl(imageUrl);
+      await cloudinary.uploader.destroy(publicId);
+      await db.ref("images/" + imageId).remove();
 
+      return res.json({ message: "Image deleted completely" });
+    }
+
+    // If deleting from a single location
+    if (location === "carousel" || location === "gallery") {
+      if (!locations.includes(location)) {
+        return res.status(400).json({ message: `Image is not in ${location}` });
+      }
+
+      const updatedLocations = locations.filter((loc) => loc !== location);
+
+      // If no locations left, delete completely
+      if (updatedLocations.length === 0) {
+        const publicId = getPublicIdFromUrl(imageUrl);
+        await cloudinary.uploader.destroy(publicId);
+        await db.ref("images/" + imageId).remove();
+
+        return res.json({ message: "Image deleted completely" });
+      }
+
+      // Otherwise, just update locations
       await db.ref("images/" + imageId + "/locations").set(updatedLocations);
 
       return res.json({
-        message: "Gallery removed, carousel kept"
+        message: `Image removed from ${location}`,
+        locations: updatedLocations,
       });
-
     }
 
-    // get cloudinary public id
-    const publicId = getPublicIdFromUrl(imageUrl);
-
-    console.log("Deleting image:", publicId);
-
-    // delete from cloudinary
-    await cloudinary.uploader.destroy(publicId);
-
-    // delete from firebase
-    await db.ref("images/" + imageId).remove();
-
-    return res.json({
-      message: "Image deleted successfully"
-    });
+    return res.status(400).json({ message: "Invalid location parameter" });
 
   } catch (err) {
     console.error(err);
