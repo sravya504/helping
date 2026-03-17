@@ -5,6 +5,7 @@ import "./HealthCare.css";
 import "./ImageCarousel.css";
 import * as bootstrap from "bootstrap";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import img1 from "../../assets/healthcare1.jpg";
 import img2 from "../../assets/healthcare2.jpg";
@@ -23,7 +24,8 @@ export default function HealthCare() {
   const [index, setIndex] = useState(0);
   const [modalData, setModalData] = useState({});
   const [showCarouselSection, setShowCarouselSection] = useState(false);
-  const [carouselImages, setCarouselImages] = useState(images);
+  const [carouselImages, setCarouselImages] = useState([]);
+const BASE_URL = "http://localhost:5000";
   const [activeImage, setActiveImage] = useState(null);
   const [deleteModalImage, setDeleteModalImage] = useState(null);
   const [newContribution, setNewContribution] = useState({
@@ -93,13 +95,50 @@ const resetContributionForm = () => {
   setNewContribution({ image: null, title: "", description: "" });
   setPreviewContribution(null);
 };
+useEffect(() => {
+  fetchImages();
+}, []);
+
+const fetchImages = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/images`);
+
+    const healthcareImages = res.data
+      .filter(
+        (img) =>
+          Array.isArray(img.locations) &&
+          img.locations.includes("healthcare")
+      )
+      .map((img) => ({
+        id: img.id,
+        url: img.url,
+      }));
+
+    // default fallback
+    if (healthcareImages.length === 0) {
+      setCarouselImages(images.map((img, i) => ({
+        id: i,
+        url: img,
+        isDefault: true,
+      })));
+    } else {
+      setCarouselImages(healthcareImages);
+    }
+
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
+  if (carouselImages.length === 0) return;
+
+  const interval = setInterval(() => {
+    setIndex((prev) => (prev + 1) % carouselImages.length);
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, [carouselImages]);
 
   const cards = [
     {
@@ -181,34 +220,41 @@ const resetContributionForm = () => {
     }, 0);
   };
 
-  const confirmDelete = () => {
-    setCarouselImages((prev) => prev.filter((img) => img !== deleteModalImage));
+ const confirmDelete = async () => {
+  try {
+    await axios.delete(
+      `${BASE_URL}/delete-image/${deleteModalImage.id}?location=healthcare`
+    );
+
+    fetchImages();
     setActiveImage(null);
     setDeleteModalImage(null);
 
     const modalEl = document.getElementById("deleteConfirmModal");
-    if (modalEl) {
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      if (modal) modal.hide();
-    }
-  };
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    modal.hide();
+
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <div>
       {/* Main Carousel */}
       <div className="carousel-container two">
         <div className="carousel">
-          {images.map((img, i) => {
+          {carouselImages.map((img, i) => {
             let position = "";
             if (i === index) position = "active";
-            else if (i === (index - 1 + images.length) % images.length) position = "left";
-            else if (i === (index + 1) % images.length) position = "right";
+            else if (i === (index - 1 + carouselImages.length) % carouselImages.length) position = "left";
+            else if (i === (index + 1) % carouselImages.length) position = "right";
             else position = "hidden";
 
             return (
               <img
                 key={i}
-                src={img}
+                src={img.url}
                 alt="carousel"
                 className={`carousel-img ${position}`}
                 onClick={() => handleCarouselClick(img, i)}
@@ -250,7 +296,7 @@ const resetContributionForm = () => {
                   onClick={() => handleImageClick(img)}
                   onDoubleClick={handleImageDoubleClick}
                 >
-                  <img src={img} alt={`carousel-${idx}`} />
+                  <img src={img.url} alt={`carousel-${idx}`} />
                   {activeImage === img && (
                     <button
                       className="delete-btn"
@@ -290,20 +336,22 @@ const resetContributionForm = () => {
                 accept="image/*"
                 onChange={(e) => {
                   const files = Array.from(e.target.files);
-                  const previews = files.map((file) => URL.createObjectURL(file));
-                  setNewImages(previews);
+                 const previews = files.map((file) => ({
+  file,
+  preview: URL.createObjectURL(file),
+}));
+setNewImages(previews);
                 }}
               />
               <div className="mt-3 d-flex flex-wrap gap-2">
-                {newImages.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={img}
-                    alt={`preview-${idx}`}
-                    className="img-thumbnail"
-                    style={{ width: "80px", height: "80px", objectFit: "cover" }}
-                  />
-                ))}
+               {newImages.map((img, idx) => (
+  <img
+    key={idx}
+    src={img.preview}
+    className="img-thumbnail"
+    style={{ width: "80px", height: "80px", objectFit: "cover" }}
+  />
+))}
               </div>
             </div>
             <div className="modal-footer">
@@ -318,10 +366,23 @@ const resetContributionForm = () => {
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={() => {
-                  setCarouselImages((prev) => [...prev, ...newImages]);
-                  setNewImages([]);
-                }}
+                onClick={async () => {
+  const formData = new FormData();
+
+  newImages.forEach((img) => {
+  formData.append("images", img.file);
+});
+
+  formData.append("locations", JSON.stringify(["healthcare"]));
+
+  try {
+    await axios.post(`${BASE_URL}/upload`, formData);
+    fetchImages();
+    setNewImages([]);
+  } catch (err) {
+    console.error(err);
+  }
+}}
                 data-bs-dismiss="modal"
               >
                 Add Images
@@ -549,6 +610,8 @@ const resetContributionForm = () => {
     </div>
   );
 }
+
+
 
 
 

@@ -399,6 +399,24 @@ app.delete("/events/:id", async (req, res) => {
 
 });
 
+// add health care 
+app.get("/images", async (req, res) => {
+  try {
+    const snapshot = await db.ref("images").once("value");
+    const data = snapshot.val() || {};
+
+    const images = Object.keys(data).map((id) => ({
+      id,
+      ...data[id],
+    }));
+
+    res.json(images);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch images" });
+  }
+});
+
 
 // ==============================
 // 🚀 Start Server
