@@ -660,6 +660,9 @@ import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
 import { useRef } from "react";
+import img1 from "../../assets/healthcare1.jpg";
+import img2 from "../../assets/healthcare2.jpg";
+import img3 from "../../assets/healthcare_con5.jpg";
 
 
 
@@ -679,12 +682,37 @@ export default function HealthCare() {
   const [newContribution, setNewContribution] = useState({ image: null, title: "", description: "" });
   const [previewContribution, setPreviewContribution] = useState(null);
   const [activeContribution, setActiveContribution] = useState(null);
+  const [deleteContributionId, setDeleteContributionId] = useState(null);
   const fileInputRef = useRef(null);
   
 
+const defaultImages = [img1, img2, img3];
+  
+ const isFormValid =
+    newContribution.image &&
+    newContribution.title.trim() &&
+    newContribution.description.trim();
 const infoModalRef = useRef(null);
 
   const navigate = useNavigate();
+  const handleFileChange = (e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  // ✅ Validate image
+  if (!file.type.startsWith("image/")) {
+    alert("Please upload a valid image file");
+    e.target.value = "";
+    return;
+  }
+
+  setNewContribution((prev) => ({ ...prev, image: file }));
+  setPreviewContribution(URL.createObjectURL(file));
+
+  // ✅ Reset file input to avoid old filename issue
+  setFileKey(Date.now());
+};
 
   // Fetch carousel images
   useEffect(() => {
@@ -693,24 +721,42 @@ const infoModalRef = useRef(null);
   }, []);
 
   const fetchCarouselImages = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/department-images?department=healthcare&type=carousel`);
-      const data = res.data;
-      setOriginalImages(data);
+  try {
+    const res = await axios.get(
+      `${BASE_URL}/department-images?department=healthcare&type=carousel`
+    );
 
-      if (data.length === 0) return;
+    const data = res.data;
 
-      let finalImages = [];
-      if (data.length === 1) finalImages = Array(3).fill(data[0]);
-      else if (data.length === 2) finalImages = [data[0], data[1], { ...data[0] }];
-      else finalImages = data;
+    // store original images
+    setOriginalImages(data);
 
-      setCarouselImages(finalImages);
-    } catch (err) {
-      console.error(err);
+    let finalImages = [];
+
+    // ✅ FIX: default images when no data
+    if (data.length === 0) {
+      finalImages = defaultImages.map((img, i) => ({
+        id: i,
+        url: img,
+        isDefault: true,
+      }));
     }
-  };
+    else if (data.length === 1) {
+      finalImages = Array(3).fill(data[0]);
+    }
+    else if (data.length === 2) {
+      finalImages = [data[0], data[1], { ...data[0] }];
+    }
+    else {
+      finalImages = data;
+    }
 
+    setCarouselImages(finalImages);
+
+  } catch (err) {
+    console.error(err);
+  }
+};
   const fetchContributions = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/contributions?department=healthcare`);
@@ -737,11 +783,12 @@ const infoModalRef = useRef(null);
   const handleImageClick = (img) => setActiveImage(img);
   const handleImageDoubleClick = () => setActiveImage(null);
 
-  const handleDeleteImage = (img) => {
-    setDeleteModalImage(img);
-    const modalEl = document.getElementById("deleteConfirmModal");
-    if (modalEl) new bootstrap.Modal(modalEl).show();
-  };
+ const handleDeleteImage = (img) => {
+  setDeleteModalImage(img);
+
+  const modalEl = document.getElementById("deleteCarouselModal"); // ✅ FIXED
+  if (modalEl) new bootstrap.Modal(modalEl).show();
+};
 
   const confirmDeleteImage = async () => {
     try {
@@ -769,6 +816,35 @@ const infoModalRef = useRef(null);
       alert("Delete failed ❌");
     }
   };
+  const confirmDeleteContribution = async () => {
+  try {
+    if (!deleteContributionId) return;
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) return alert("You are not logged in!");
+
+    const token = await user.getIdToken();
+
+    await axios.delete(
+      `${BASE_URL}/contributions/delete/${deleteContributionId}?department=healthcare`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    fetchContributions();
+    setActiveContribution(null);
+    setDeleteContributionId(null);
+
+    const modalEl = document.getElementById("deleteContributionModal");
+    bootstrap.Modal.getInstance(modalEl)?.hide();
+
+  } catch (err) {
+    console.error(err);
+    alert("Delete failed");
+  }
+};
 
   const handleAddImages = async () => {
     try {
@@ -802,6 +878,40 @@ const infoModalRef = useRef(null);
 //       console.error(err);
 //     }
 //   };
+const deleteCarouselImage = async () => {
+  try {
+    if (!deleteModalImage) return;
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) return alert("Login required");
+
+    const token = await user.getIdToken();
+
+    await axios.delete(
+      `${BASE_URL}/department-wise/delete-image/${deleteModalImage.id}?department=healthcare&type=carousel`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // ✅ Refresh carousel
+    fetchCarouselImages();
+
+    // ✅ Reset state
+    setDeleteModalImage(null);
+
+    // ✅ Close modal
+    const modalEl = document.getElementById("deleteCarouselModal");
+    bootstrap.Modal.getInstance(modalEl)?.hide();
+
+  } catch (err) {
+    console.error(err);
+    alert("Delete failed");
+  }
+};
 
   const handleDeleteContribution = async (id) => {
     if (!window.confirm("Are you sure you want to delete this contribution?")) return;
@@ -830,8 +940,12 @@ const token = await user.getIdToken();
           {carouselImages.map((img, i) => {
             let position = i === index ? "active" : i === (index - 1 + carouselImages.length) % carouselImages.length ? "left" : i === (index + 1) % carouselImages.length ? "right" : "hidden";
             return (
-              <img key={i} src={img.url} alt="carousel" className={`carousel-img ${position}`} onClick={() => handleCarouselClick(img, i)} />
-            );
+<img
+  key={i}
+  src={img.url}
+  alt="carousel"
+  className={`carousel-img ${position}`}
+onClick={() => handleCarouselClick(img, i)}/>            );
           })}
         </div>
       </div>
@@ -845,15 +959,30 @@ const token = await user.getIdToken();
               <button className="close-carousel-btn" onClick={() => { setShowCarouselSection(false); setActiveImage(null); }}>Close</button>
             </div>
             <div className="carousel-images-grid">
-<div className="carousel-image-card add-card" onClick={() => {
-  const modalEl = document.getElementById("addImagesModal");
-  if (modalEl) new bootstrap.Modal(modalEl).show();
-}}>
+<div
+  className="carousel-image-card add-card"
+  style={{ zIndex: 1000, position: "relative", cursor: "pointer" }}
+  onClick={(e) => {
+    e.stopPropagation(); // 🔥 VERY IMPORTANT
+
+    const modalEl = document.getElementById("addImagesModal");
+
+    if (modalEl) {
+      const existingModal = bootstrap.Modal.getInstance(modalEl);
+      if (existingModal) {
+        existingModal.show();
+      } else {
+        new bootstrap.Modal(modalEl).show();
+      }
+    }
+  }}
+>
   +
-</div>              {originalImages.map((img, idx) => (
+</div>         
+   {originalImages.map((img, idx) => (
                 <div key={idx} className={`carousel-image-card ${activeImage === img ? "active" : ""}`} onClick={(e) => { e.stopPropagation(); handleImageClick(img); }} onDoubleClick={handleImageDoubleClick}>
                   <img src={img.url} alt={`carousel-${idx}`} />
-                  {activeImage === img && <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteImage(img); }}>Delete</button>}
+                  {activeImage === img && !img.isDefault  && <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDeleteImage(img); }}>Delete</button>}
                 </div>
               ))}
             </div>
@@ -876,16 +1005,17 @@ const token = await user.getIdToken();
 
   {/* + Add button at top-right */}
   <button
-    className="btn btn-maroon position-absolute top-0 end-0 mt-2 me-2"
-    data-bs-toggle="modal"
-    data-bs-target="#addContributionModal"
-    onClick={() => {
-      setNewContribution({ image: null, title: "", description: "" });
-      setPreviewContribution(null);
-    }}
-  >
-    +
-  </button>
+  className="btn btn-maroon position-absolute top-0 end-0 mt-2 me-2"
+  onClick={() => {
+    setNewContribution({ image: null, title: "", description: "" });
+    setPreviewContribution(null);
+
+    const modalEl = document.getElementById("addContributionModal");
+    if (modalEl) new bootstrap.Modal(modalEl).show();
+  }}
+>
+  +
+</button>
 
   <div className="row justify-content-center g-4">
     {contributions.map((card) => (
@@ -895,23 +1025,46 @@ const token = await user.getIdToken();
           onClick={() => setActiveContribution(card.id)}
           onDoubleClick={() => setActiveContribution(null)}
         >
+            {activeContribution === card.id && (
+  <div className="position-absolute top-0 end-0 m-2">
+    <button
+      className="btn btn-danger btn-sm"
+     onClick={(e) => {
+  e.stopPropagation();
+  setDeleteContributionId(card.id);
+
+  const modalEl = document.getElementById("deleteContributionModal");
+  if (modalEl) new bootstrap.Modal(modalEl).show();
+}}
+    >
+      Delete
+    </button>
+  </div>
+)}
           <img src={card.url} className="card-img-top" alt={card.title} />
           <div className="card-body d-flex flex-column">
             <h5 className="card-title">{card.title}</h5>
             <p className="card-text text-truncate">{card.description}</p>
             <div className="mt-auto">
-              <button
-                className="read-more-btn w-100"
-                onClick={() => {
-                  setModalData({
-                    title: card.title,
-                    image: card.url,
-                    fullDesc: card.description,
-                  });
-                }}
-              >
-                Read More
-              </button>
+            <button
+  className="read-more-btn mt-auto"
+  onClick={(e) => {
+    e.stopPropagation();
+
+    setModalData({
+      title: card.title,
+      image: card.url,
+      fullDesc: card.description,
+    });
+
+    setTimeout(() => {
+      const modalEl = document.getElementById("infoModal");
+      if (modalEl) new bootstrap.Modal(modalEl).show();
+    }, 100); // ✅ FIX timing issue
+  }}
+>
+  Read More
+</button>
             </div>
           </div>
         </div>
@@ -929,7 +1082,8 @@ const token = await user.getIdToken();
               <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div className="modal-body">
-<input
+{/* <input
+key = {fileKey}
   type="file"
   accept="image/*"
   ref={fileInputRef}
@@ -941,9 +1095,16 @@ const token = await user.getIdToken();
     }
 
     // Reset the input so the same file can be selected again
-    e.target.value = null;
-  }}
-/>              <input type="text" className="form-control my-2" placeholder="Title" value={newContribution.title} onChange={(e) => setNewContribution(prev => ({ ...prev, title: e.target.value }))} />
+
+  }}/>        */}
+  <input
+  key={fileKey} // ✅ important
+  type="file"
+  className="form-control"
+  accept="image/*"
+  onChange={handleFileChange}
+/>
+         <input type="text" className="form-control my-2" placeholder="Title" value={newContribution.title} onChange={(e) => setNewContribution(prev => ({ ...prev, title: e.target.value }))} />
               <textarea className="form-control my-2" placeholder="Description" value={newContribution.description} onChange={(e) => setNewContribution(prev => ({ ...prev, description: e.target.value }))} />
               {previewContribution && <img src={previewContribution} alt="preview" className="img-fluid mt-2" style={{ maxHeight: "150px", objectFit: "cover" }} />}
             </div>
@@ -953,8 +1114,12 @@ const token = await user.getIdToken();
               <button
   type="button"
   className="btn btn-primary"
+  disabled={!isFormValid}
   data-bs-dismiss="modal"
   onClick={async () => {
+
+  
+
     try {
       const formData = new FormData();
       if (newContribution.image) formData.append("images", newContribution.image); // must match backend
@@ -967,6 +1132,7 @@ const token = await user.getIdToken();
       fetchContributions();
       setNewContribution({ image: null, title: "", description: "" });
       setPreviewContribution(null);
+      
     } catch (err) {
       console.error(err);
     }
@@ -978,6 +1144,112 @@ const token = await user.getIdToken();
           </div>
         </div>
       </div>
+      <div className="modal fade" id="deleteCarouselModal">
+  <div className="modal-dialog modal-dialog-centered">
+    <div className="modal-content">
+      <div className="modal-header bg-danger text-white">
+        <h5>Confirm Delete</h5>
+        <button className="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div className="modal-body text-center">
+        Delete this carousel image?
+      </div>
+      <div className="modal-footer">
+        <button className="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button className="btn btn-danger" onClick={deleteCarouselImage}>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div className="modal fade" id="deleteContributionModal">
+  <div className="modal-dialog modal-dialog-centered">
+    <div className="modal-content">
+      <div className="modal-header bg-danger text-white">
+        <h5>Confirm Delete</h5>
+        <button className="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div className="modal-body text-center">
+        Delete this contribution?
+      </div>
+      <div className="modal-footer">
+        <button className="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button className="btn btn-danger" onClick={confirmDeleteContribution}>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+ <div className="modal fade" id="addImagesModal" tabIndex="-1">
+  <div className="modal-dialog modal-dialog-centered">
+    <div className="modal-content">
+      <div className="modal-header bg-dark text-white">
+        <h5 className="modal-title">Add Images</h5>
+        <button className="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div className="modal-body">
+        <input
+          key={fileKey}
+          type="file"
+          multiple
+          accept="image/*"
+          className="form-control"
+          onChange={(e) => {
+            const files = Array.from(e.target.files);
+
+            // ✅ VALIDATION
+            const validFiles = files.filter((file) => file.type.startsWith("image/"));
+
+            if (validFiles.length !== files.length) {
+              alert("Only image files allowed");
+            }
+
+            const previews = validFiles.map((file) => ({
+              file,
+              preview: URL.createObjectURL(file),
+            }));
+
+            setNewImages(previews);
+          }}
+        />
+
+        <div className="mt-3 d-flex flex-wrap gap-2">
+          {newImages.map((img, idx) => (
+            <img
+              key={idx}
+              src={img.preview}
+              className="img-thumbnail"
+              style={{ width: "80px", height: "80px", objectFit: "cover" }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="modal-footer">
+        <button className="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+
+        <button
+          className="btn btn-primary"
+          onClick={handleAddImages}
+          data-bs-dismiss="modal"
+        >
+          Upload
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
       {/* Info Modal */}
 <div
   className="modal fade"
@@ -994,13 +1266,10 @@ const token = await user.getIdToken();
   type="button"
   className="btn-close btn-close-white"
   data-bs-dismiss="modal"
-  onClick={() => {
-    setPreviewContribution(null);
-    setNewContribution({ image: null, title: "", description: "" });
-    if (fileInputRef.current) fileInputRef.current.value = null;
-  }}
+ 
 ></button>
       </div>
+     
       <div className="modal-body text-center">
         {modalData.image && (
           <img src={modalData.image} alt={modalData.title} className="img-fluid rounded mb-3" />
