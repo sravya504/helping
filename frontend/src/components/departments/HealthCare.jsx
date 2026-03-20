@@ -684,6 +684,7 @@ export default function HealthCare() {
   const [activeContribution, setActiveContribution] = useState(null);
   const [deleteContributionId, setDeleteContributionId] = useState(null);
   const fileInputRef = useRef(null);
+    const isAdmin = sessionStorage.getItem("isAdmin") === "true";
   
 
 const defaultImages = [img1, img2, img3];
@@ -777,7 +778,7 @@ const infoModalRef = useRef(null);
 
   // Handle carousel click
   const handleCarouselClick = (img, i) => {
-    if (i === index) setShowCarouselSection(true);
+    if (i === index && sessionStorage.getItem("isAdmin") === "true") setShowCarouselSection(true);
   };
 
   const handleImageClick = (img) => setActiveImage(img);
@@ -1004,18 +1005,19 @@ onClick={() => handleCarouselClick(img, i)}/>            );
   <h2 className="text-center mb-4 text-black fw-bold">Our Contributions</h2>
 
   {/* + Add button at top-right */}
-  <button
-  className="btn btn-maroon position-absolute top-0 end-0 mt-2 me-2"
-  onClick={() => {
-    setNewContribution({ image: null, title: "", description: "" });
-    setPreviewContribution(null);
-
-    const modalEl = document.getElementById("addContributionModal");
-    if (modalEl) new bootstrap.Modal(modalEl).show();
-  }}
->
-  +
-</button>
+  {sessionStorage.getItem("isAdmin") === "true" && (
+   <button
+   className="btn btn-maroon position-absolute top-0 end-0 mt-2 me-2"
+   onClick={() => {
+     setNewContribution({ image: null, title: "", description: "" });
+     setPreviewContribution(null);
+ 
+     const modalEl = document.getElementById("addContributionModal");
+     if (modalEl) new bootstrap.Modal(modalEl).show();
+   }}
+ >
+   +
+ </button>)}
 
   <div className="row justify-content-center g-4">
     {contributions.map((card) => (
@@ -1025,7 +1027,7 @@ onClick={() => handleCarouselClick(img, i)}/>            );
           onClick={() => setActiveContribution(card.id)}
           onDoubleClick={() => setActiveContribution(null)}
         >
-            {activeContribution === card.id && (
+            {sessionStorage.getItem("isAdmin") === "true" && activeContribution === card.id && (
   <div className="position-absolute top-0 end-0 m-2">
     <button
       className="btn btn-danger btn-sm"
