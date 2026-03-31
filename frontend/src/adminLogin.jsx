@@ -99,7 +99,7 @@ const token = await user.getIdToken();
 // STORE TOKEN
 localStorage.setItem("token", token);
 
-    const response = await fetch("http://localhost:5000/admin/dashboard", {
+    const response = await fetch("http://localhost:5000/modify/dashboard", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -115,7 +115,7 @@ localStorage.setItem("token", token);
 
   // Delay redirect so message is visible
   setTimeout(() => {
-    navigate("/admin/dashboard");
+    navigate("/modify/dashboard");
   }, 1500); // 1.5 seconds
 } else {
   setLoginMessage(data.message || "Invalid credentials!");

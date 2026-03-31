@@ -244,7 +244,7 @@ export default function AdminMemberForm() {
         setYear("");
         setCategory(CATEGORIES[0].key);
 
-        setTimeout(() => navigate("/admin/ourTeam"), 1000);
+        setTimeout(() => navigate("/modify/ourTeam"), 1000);
       } else {
         alert("Error: " + data.message);
       }

@@ -36,7 +36,7 @@ function AdminRoute({ children }) {
     return children;
   }
 
-  return <Navigate to="/admin/login" />;
+  return <Navigate to="/modify/login" />;
 }
 
 export default AdminRoute;

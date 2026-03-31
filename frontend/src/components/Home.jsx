@@ -45,7 +45,7 @@ export default function Home() {
     fetchCarouselImages();
   }, []);
 
-  const leftIndex = (centerIndex - 1 + carouselImages.length) % carouselImages.length;
+  const leftIndex = (centerIndex - 1 + carouselImages.length) % carouselImages.length; //   this itself handles images<3 case
   const rightIndex = (centerIndex + 1) % carouselImages.length;
 
   const nextImage = () => setCenterIndex((prev) => (prev + 1) % carouselImages.length);

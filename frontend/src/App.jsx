@@ -48,13 +48,13 @@ function AppWrapper() {
   <Route path="/outsideCharity" element={<OutsideCharity />} />
   <Route path="/publicRelations" element={<PublicRelations />} />
  
-<Route path="/admin" element={<Navigate to="/admin/dashboard" />} />
+<Route path="/modify" element={<Navigate to="/modify/dashboard" />} />
 
-<Route path="/admin/login" element={<AdminLogin />} />
+<Route path="/modify/login" element={<AdminLogin />} />
 
 
 <Route
-  path="/admin/dashboard"
+  path="/modify/dashboard"
   element={
     <AdminRoute>
       <AdminDashboard />

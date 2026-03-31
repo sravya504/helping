@@ -57,7 +57,7 @@ app.get("/", (req, res) => {
   res.send("Backend is running successfully 🚀");
 });
 
-app.get("/admin/dashboard", verifyAdmin, (req, res) => {
+app.get("/modify/dashboard", verifyAdmin, (req, res) => {
   res.json({
     message: "Welcome Admin 🎉",
     user: req.user.email,
@@ -373,6 +373,112 @@ app.get("/events", async (req, res) => {
 app.delete("/events/:id", async (req, res) => {
   await db.ref(`events/${req.params.id}`).remove();
   res.json({ message: "Event deleted" });
+});
+
+
+// ==============================
+// Upload Single Faculty
+// ==============================
+app.post("/upload-faculty", verifyAdmin, upload.single("image"), async (req, res) => {
+  try {
+    const { name, type } = req.body;
+    const file = req.file;
+
+    if (!file || !name || !type) return res.status(400).json({ message: "All fields are required" });
+
+    const result = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: "faculty" },
+        (err, result) => (err ? reject(err) : resolve(result))
+      );
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+
+    const newRef = db.ref("faculty").push();
+    await newRef.set({ name, type, photo: result.secure_url, createdAt: Date.now() });
+
+    res.json({ message: "Faculty added successfully", url: result.secure_url, id: newRef.key });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Faculty upload failed" });
+  }
+});
+
+// ==============================
+// Get All Faculty
+// ==============================
+app.get("/faculty",verifyAdmin, async (req, res) => {
+  try {
+    const snapshot = await db.ref("faculty").once("value");
+    const data = snapshot.val();
+    const facultyArray = data
+      ? Object.keys(data).map((key) => ({
+          id: key,
+          name: data[key].name,
+          type: data[key].type,
+          photo: data[key].photo,
+        }))
+      : [];
+    res.json(facultyArray);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch faculty" });
+  }
+});
+
+// ==============================
+// Delete Faculty
+// ==============================
+app.delete("/delete-faculty/:id", verifyAdmin, async (req, res) => {
+  try {
+    const id = req.params.id;
+    const snapshot = await db.ref("faculty/" + id).once("value");
+    const data = snapshot.val();
+    if (!data) return res.status(404).json({ message: "Faculty not found" });
+
+    const publicId = getPublicIdFromUrl(data.photo);
+    await cloudinary.uploader.destroy(publicId);
+    await db.ref("faculty/" + id).remove();
+
+    res.json({ message: "Faculty deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Delete failed" });
+  }
+});
+
+
+
+
+// ==============================
+// Delete Image (Gallery / Carousel)
+// ==============================
+app.delete("/delete-image/:id", verifyAdmin, async (req, res) => {
+  try {
+    const imageId = req.params.id;
+    const snapshot = await db.ref("images/" + imageId).once("value");
+    const imageData = snapshot.val();
+
+    if (!imageData) return res.status(404).json({ message: "Image not found" });
+
+    const locations = imageData.locations || [];
+    const imageUrl = imageData.url;
+
+    if (locations.includes("carousel") && locations.includes("gallery")) {
+      const updatedLocations = locations.filter((loc) => loc !== "gallery");
+      await db.ref("images/" + imageId + "/locations").set(updatedLocations);
+      return res.json({ message: "Gallery removed, carousel kept" });
+    }
+
+    const publicId = getPublicIdFromUrl(imageUrl);
+    await cloudinary.uploader.destroy(publicId);
+    await db.ref("images/" + imageId).remove();
+
+    res.json({ message: "Image deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Delete failed" });
+  }
 });
 
 // ==============================
