@@ -189,7 +189,7 @@ import img1 from "../../assets/Tricycle Distribution-2013 (1)(1).jpeg"
 
 
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://helping-backend.onrender.com/";
 
 export default function InternalCare() {
   const [carouselImages, setCarouselImages] = useState([]);

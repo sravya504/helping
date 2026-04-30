@@ -221,7 +221,7 @@ import img3 from "../../assets/publicrelations3.jpeg";
 
 
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://helping-backend.onrender.com/";
 
 export default function PublicRelations() {
   const [carouselImages, setCarouselImages] = useState([]);

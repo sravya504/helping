@@ -178,7 +178,7 @@ export default function Team() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:5000/faculty", {
+        const res = await fetch("https://helping-backend.onrender.com/faculty", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -231,7 +231,7 @@ export default function Team() {
 
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:5000/upload-faculty", {
+      const res = await fetch("https://helping-backend.onrender.com/upload-faculty", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -298,7 +298,7 @@ export default function Team() {
 
     const token = localStorage.getItem("token");
 
-    await fetch(`http://localhost:5000/delete-faculty/${id}`, {
+    await fetch(`https://helping-backend.onrender.com/delete-faculty/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

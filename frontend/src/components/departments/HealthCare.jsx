@@ -666,7 +666,7 @@ import img3 from "../../assets/healthcare_con5.jpg";
 
 
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://helping-backend.onrender.com/";
 
 export default function HealthCare() {
   const [carouselImages, setCarouselImages] = useState([]);

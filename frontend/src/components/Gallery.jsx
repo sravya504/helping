@@ -384,7 +384,7 @@ const Gallery = () => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:5000/delete-image/${id}?location=${location}`,
+        `https://helping-backend.onrender.com/delete-image/${id}?location=${location}`,
         {
           method: "DELETE",
           headers: {

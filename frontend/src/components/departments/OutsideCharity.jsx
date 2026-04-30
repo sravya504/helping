@@ -224,7 +224,7 @@ import img3 from "../../assets/outsidecharity4.jpeg";
 
 
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://helping-backend.onrender.com/";
 
 export default function OutsideCharity() {
   const [carouselImages, setCarouselImages] = useState([]);

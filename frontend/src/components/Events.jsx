@@ -414,7 +414,7 @@ function Events() {
   // ==============================
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/events");
+      const res = await axios.get("https://helping-backend.onrender.com/events");
       setEvents(res.data);
     } catch (error) {
       console.error("Error fetching events", error);
@@ -455,7 +455,7 @@ function Events() {
     formData.append("location", newEvent.location);
 
     try {
-      await axios.post("http://localhost:5000/events", formData);
+      await axios.post("https://helping-backend.onrender.com/events", formData);
       await fetchEvents();
       setShowAddEventModal(false);
       setNewEvent({
@@ -476,7 +476,7 @@ function Events() {
   // ==============================
   const handleDeleteEvent = async () => {
     try {
-      await axios.delete(`http://localhost:5000/events/${selectedEvent.id}`);
+      await axios.delete(`https://helping-backend.onrender.com/events/${selectedEvent.id}`);
       await fetchEvents();
       setShowDeleteConfirm(false);
       setShowModal(false);

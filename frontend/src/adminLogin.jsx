@@ -99,7 +99,7 @@ const token = await user.getIdToken();
 // STORE TOKEN
 localStorage.setItem("token", token);
 
-    const response = await fetch("http://localhost:5000/modify/dashboard", {
+    const response = await fetch("https://helping-backend.onrender.com/modify/dashboard", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
